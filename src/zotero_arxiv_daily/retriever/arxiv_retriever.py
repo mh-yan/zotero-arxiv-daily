@@ -44,9 +44,13 @@ class ArxivRetriever(BaseRetriever):
         authors = [a.name for a in raw_paper.authors]
         abstract = raw_paper.summary
         pdf_url = raw_paper.pdf_url
-        full_text = extract_text_from_pdf(raw_paper)
-        if full_text is None:
-            full_text = extract_text_from_tar(raw_paper)
+        if self.config.executor.debug:
+            # Skip heavyweight PDF/source extraction during CI smoke tests.
+            full_text = None
+        else:
+            full_text = extract_text_from_pdf(raw_paper)
+            if full_text is None:
+                full_text = extract_text_from_tar(raw_paper)
         return Paper(
             source=self.name,
             title=title,
