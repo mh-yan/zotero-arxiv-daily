@@ -26,7 +26,7 @@ class ArxivRetriever(BaseRetriever):
         all_paper_ids = [i.id.removeprefix("oai:arXiv.org:") for i in feed.entries if i.get("arxiv_announce_type","new") == 'new']
         if self.config.executor.debug:
             # Keep debug and CI runs short enough to validate the pipeline quickly.
-            all_paper_ids = all_paper_ids[:5]
+            all_paper_ids = all_paper_ids[:2]
 
         # Get full information of each paper from arxiv api
         bar = tqdm(total=len(all_paper_ids))
