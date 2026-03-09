@@ -75,9 +75,13 @@ class Executor:
         logger.info(f"Total {len(all_papers)} papers retrieved from all sources")
         reranked_papers = []
         if len(all_papers) > 0:
-            logger.info("Reranking papers...")
-            reranked_papers = self.reranker.rerank(all_papers, corpus)
-            reranked_papers = reranked_papers[:self.config.executor.max_paper_num]
+            if self.config.executor.debug:
+                logger.info("Debug mode: skipping reranker for a faster smoke test")
+                reranked_papers = all_papers[:self.config.executor.max_paper_num]
+            else:
+                logger.info("Reranking papers...")
+                reranked_papers = self.reranker.rerank(all_papers, corpus)
+                reranked_papers = reranked_papers[:self.config.executor.max_paper_num]
             logger.info("Generating TLDR and affiliations...")
             for p in tqdm(reranked_papers):
                 p.generate_tldr(self.openai_client, self.config.llm)
